@@ -1,2 +1,2 @@
-mov ax 34
+mov ax 234
 halt

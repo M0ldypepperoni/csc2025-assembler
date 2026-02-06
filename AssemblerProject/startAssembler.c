@@ -12,11 +12,7 @@
 #include <ctype.h>
 #include <time.h>
 
-<<<<<<< HEAD
 char ASM_FILE_NAME[] = "appart1.asm";  //the name of the assembly code file
-=======
-char ASM_FILE_NAME[ ] = "appart1.asm";
->>>>>>> 14a0aab93bd44b0423b44e997a8cfa917b679186
 
 #define MAX 150			// strlen of simulators memory can be changed
 #define COL 9			// number of columns for output
@@ -63,8 +59,36 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] );	
 void convertToMachineCode( FILE *fin );	// Converts a single line of ASM to machine code	***NEEDS WORK***
 void assembler( );			// Converts the entire ASM file and stores it in memory
 void runMachineCode( );	// Executes the machine code	
-void putValue( int operand, int value );  //prototype only ***NEEDS WORK***
-Memory getValue( Memory operand ); //prototype only ***NEEDS WORK***
+Memory getValue(Memory operand)
+{
+	int value;
+	if ( operand == AXREG) {
+		return regis.AX;
+	}
+	else if (operand == CONSTANT)
+	{
+		value = memory[address];
+		address++;
+		return value;
+	}
+}//prototype only ***NEEDS WORK***
+void putValue(int operand, int value)
+{
+
+	if (operand == AXREG)
+	{
+		regis.AX = value;
+
+	}
+	else if (operand == CXREG)
+	{
+		regis.CX = value;
+
+	}
+}
+
+
+//prototype only ***NEEDS WORK***
 
 // Helper functions,this functions may be changed ****NEEDS WORK***
 int changeToNumber( char line[ ], int start );	// converts a sub-string to an int, 
@@ -79,10 +103,7 @@ void printMemoryDumpHex( );				   // Prints memory in hexedecimal
 int isDigitOrNeg( char letter );            // is a charater the start of a positive or negative number
 void registerStartValues( );              // gives all registers & flag random values to start
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 14a0aab93bd44b0423b44e997a8cfa917b679186
 //***needs work ***
 //no comment needed for function main, its comment is the header for the project
 int main( )
@@ -161,7 +182,17 @@ void convertToMachineCode( FILE* fin )
 	{
 		if ( part1[ 0 ] == 'm' )  //move into a register
 		{
-			//put the command MOVREG into the first 3 bits of machineCode
+			machineCode = MOVREG;
+		}
+		int operand1 = whichOperand( part2 ) << 3;
+		int operand2 = whichOperand(part3);
+		machineCode = machineCode + operand1 + operand2;
+		memory[ address ] = machineCode;
+		address++;
+		if(operand2 == CONSTANT) 
+		{
+			memory[ address ] = changeToNumber( part3, 0 );
+			address++;
 		}
 		//put the first operand (register) into the next 2 bits (use bitshift)
 		//put the second operand into the last 3 bits 
@@ -179,18 +210,26 @@ Comment Needs to be written
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
-	#define MASK1 = 224;   //111 00 000
-	#define MASK2 = 24;    //000 11 000
-	#define MASK3 = 7;	  //000 00 111
+	#define MASK1  224   //111 00 000
+	#define MASK2  24    //000 11 000
+	#define MASK3  7	  //000 00 111
 
 	Memory part1, part2, part3; // the three parts of the line
 	int value1, value2;   //the actual values in the registers or constants
-
+	int value;
 	address = 0;  //reset address to the first item in memory
 	Memory fullCommand = memory[ address ];  //not yet broken into the three parts
 	address++;
 	while ( fullCommand != HALT )
 	{
+		part1 = fullCommand & MASK1;
+		part2 = fullCommand & MASK2;
+		part3 = fullCommand & MASK3;
+		if (part1 == MOVREG)
+		{
+			value = getValue(part3);
+
+		}
 		//get the parts by ANDing with masks
 		//if part1 is MOVREG
 		//get the value from part3
@@ -201,6 +240,8 @@ void runMachineCode( )
 		//NOTE: as you code each command, organize them one part, two part and three part commands
 		
 		//debugging tool change address to show what you are unsure about
+		fullCommand = memory[address];  //not yet broken into the three parts
+		address++;
 		if ( address > 0 )
 		{
 			printMemoryDump( );//debugging, comment out at end of semester 
@@ -266,16 +307,7 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 		printf("\nlineIndex is: %d", lineIndex);
 	}
 
-	if ( line[ lineIndex ] != '\0' )  //command has no other parts, not the end of line
-	{
-		printf( "\nlineIndex is: %d", lineIndex );  //debugging remove command when other parts are done.
-
-		//What needs to be done.
-		//put the code here
-		//copy the characters from line into the two parts, part2 and part3
-		//part2 = "to be done"; //note write one function that works for both
-		//part3 = "to be done";
-	}
+	
 } //end splitCommand
 
 /*********************   whichOperand   ***************************
