@@ -62,8 +62,21 @@ void runMachineCode( );	// Executes the machine code
 Memory getValue(Memory operand)
 {
 	int value;
-	if ( operand == AXREG) {
+	if ( operand == AXREG) 
+	{
 		return regis.AX;
+	}
+	if (operand == BXREG) 
+	{
+		return regis.BX;
+	}
+	if (operand == CXREG) 
+	{
+		return regis.CX;
+	}
+	if (operand == DXREG) 
+	{
+		return regis.DX;
 	}
 	else if (operand == CONSTANT)
 	{
@@ -78,12 +91,18 @@ void putValue(int operand, int value)
 	if (operand == AXREG)
 	{
 		regis.AX = value;
-
+	}
+	else if (operand == BXREG)
+	{
+		regis.BX = value;
 	}
 	else if (operand == CXREG)
 	{
 		regis.CX = value;
-
+	}
+	else if (operand == DXREG)
+	{
+		regis.DX = value;
 	}
 }
 
@@ -223,12 +242,12 @@ void runMachineCode( )
 	while ( fullCommand != HALT )
 	{
 		part1 = fullCommand & MASK1;
-		part2 = fullCommand & MASK2;
+		part2 = (fullCommand & MASK2) >> 3;
 		part3 = fullCommand & MASK3;
 		if (part1 == MOVREG)
 		{
 			value1 = getValue(part3);
-     putValue(part2, value1); 
+			putValue(part2, value1); 
 
 		}
 		//get the parts by ANDing with masks
@@ -247,7 +266,7 @@ void runMachineCode( )
 		{
 			printMemoryDump( );//debugging, comment out at end of semester 
 		}
-	}
+	}// end of loop
 } //end runMachineCode
 
 /*********************************************************************************
@@ -305,7 +324,6 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 			partIndex++;
 		}
 		part3[lineIndex] = '\0';
-		printf("\nlineIndex is: %d", lineIndex);
 	}
 
 	
