@@ -216,7 +216,7 @@ void runMachineCode( )
 
 	Memory part1, part2, part3; // the three parts of the line
 	int value1, value2;   //the actual values in the registers or constants
-	int value;
+
 	address = 0;  //reset address to the first item in memory
 	Memory fullCommand = memory[ address ];  //not yet broken into the three parts
 	address++;
@@ -227,7 +227,8 @@ void runMachineCode( )
 		part3 = fullCommand & MASK3;
 		if (part1 == MOVREG)
 		{
-			value = getValue(part3);
+			value1 = getValue(part3);
+     putValue(part2, value1); 
 
 		}
 		//get the parts by ANDing with masks
