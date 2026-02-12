@@ -1,4 +1,4 @@
-// name:
+// name:Avery Pitts
 // project title:
 // date:
 // i/o files:
@@ -28,6 +28,8 @@ char ASM_FILE_NAME[] = "appart1.asm";  //the name of the assembly code file
 //commands
 #define HALT 5
 #define MOVREG 192
+#define ADD 160
+#define PUT 7
 
 //boolean
 #define TRUE 1
@@ -198,6 +200,11 @@ void convertToMachineCode( FILE* fin )
 
 	fgets( line, LINE_SIZE, fin );		// Takes one line from the asm file
 	changeToLowerCase( line );
+	if (line[0] == '\n' || line[0] == '\0') //handles blank lines
+	{
+		address++;
+		return;
+	}
 
 	splitCommand( line, part1, part2, part3 );
 	            //for debugging, comment out when you have most commands converted.
@@ -208,6 +215,14 @@ void convertToMachineCode( FILE* fin )
 	{
 		memory[ address ] = HALT;
 		address++;
+		return;
+	}
+	else if (part1[0] == 'p')
+	{
+		machineCode = PUT;
+		memory[address] = machineCode;
+		address++;
+		return;
 	}
 	      //start of two part commands
 
@@ -216,6 +231,10 @@ void convertToMachineCode( FILE* fin )
 		if ( part1[ 0 ] == 'm' )  //move into a register
 		{
 			machineCode = MOVREG;
+		}
+		else if (part1[0] == 'a') 
+		{
+			machineCode = ADD;
 		}
 		int operand1 = whichOperand( part2 ) << 3;
 		int operand2 = whichOperand(part3);
@@ -239,8 +258,15 @@ void convertToMachineCode( FILE* fin )
 /********************   runMachineCode   ***********************
 Executes the machine code that is in memory, the virtual machine
 
+<<<<<<< HEAD
  parameters: none
  return value: none
+=======
+Runs the code from .asm file that is interpreted by convert to machine
+
+//parameter: none
+//return: none
+>>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
@@ -259,6 +285,7 @@ void runMachineCode( )
 		part1 = fullCommand & MASK1;
 		part2 = ( fullCommand & MASK2 ) >> 3;
 		part3 = fullCommand & MASK3;
+<<<<<<< HEAD
 
 		if ( part1 == MOVREG )
 		{
@@ -266,8 +293,29 @@ void runMachineCode( )
 			putValue( part2, value1 ); 
 		}
 		
+=======
+		//1 part commands
+		if (fullCommand == PUT)
+		{
+			printf("\t AX is %d", regis.AX);
+		}
+		//2 part commands
 
-		//NOTE: as you code each command, organize them one part, two part and three part commands
+		//3 part commands
+		if (part1 == MOVREG)
+		{
+			value1 = getValue(part3);
+			putValue(part2, value1); 
+		}
+>>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
+
+		if ( part1 == ADD )  //add to a register
+		{
+			value1 = getValue(part2);
+			value2 = getValue(part3);
+			value1 += value2;
+			putValue(part2, value1);
+		}
 		
 		//debugging tool change address to show what you are unsure about
 		fullCommand = memory[ address ];  //not yet broken into the three parts

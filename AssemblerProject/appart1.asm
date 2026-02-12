@@ -2,4 +2,6 @@ mov bx 55
 mov ax 234
 mov cx 2
 mov dx cx
+add cx bx
+put
 halt
