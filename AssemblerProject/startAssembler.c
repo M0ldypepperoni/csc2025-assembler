@@ -58,7 +58,14 @@ void runMachineCode( );	// Executes the machine code	 ****NEEDS WORK***
 void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] );	// splits line of asm into it's three parts	****NEEDS WORK***
 void convertToMachineCode( FILE *fin );	// Converts a single line of ASM to machine code	***NEEDS WORK***
 void assembler( );			// Converts the entire ASM file and stores it in memory
-void runMachineCode( );	// Executes the machine code	
+void runMachineCode( );	// Executes the machine code
+/************  getValue   ***************
+* gets the value of an operand, 
+	if the operand is a constant it gets the value from memory
+*parameters: operand
+* return value: the value of the coresponding resgistery or constant
+----------------------------------------*/
+
 Memory getValue(Memory operand)
 {
 	int value;
@@ -85,6 +92,13 @@ Memory getValue(Memory operand)
 		return value;
 	}
 }//prototype only ***NEEDS WORK***
+/************  putValue   ****************
+* puts a value into a register
+* 
+* parameters: operand, value
+* return value: none
+* 
+----------------------------------------*/
 void putValue(int operand, int value)
 {
 
@@ -225,7 +239,8 @@ void convertToMachineCode( FILE* fin )
 /********************   runMachineCode   ***********************
 Executes the machine code that is in memory, the virtual machine
 
-Comment Needs to be written
+ parameters: none
+ return value: none
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
@@ -242,25 +257,20 @@ void runMachineCode( )
 	while ( fullCommand != HALT )
 	{
 		part1 = fullCommand & MASK1;
-		part2 = (fullCommand & MASK2) >> 3;
+		part2 = ( fullCommand & MASK2 ) >> 3;
 		part3 = fullCommand & MASK3;
-		if (part1 == MOVREG)
-		{
-			value1 = getValue(part3);
-			putValue(part2, value1); 
 
+		if ( part1 == MOVREG )
+		{
+			value1 = getValue( part3 );
+			putValue( part2, value1 ); 
 		}
-		//get the parts by ANDing with masks
-		//if part1 is MOVREG
-		//get the value from part3
-		//put the value into the register specified by part2
-		//get the next command
-		//increment address
+		
 
 		//NOTE: as you code each command, organize them one part, two part and three part commands
 		
 		//debugging tool change address to show what you are unsure about
-		fullCommand = memory[address];  //not yet broken into the three parts
+		fullCommand = memory[ address ];  //not yet broken into the three parts
 		address++;
 		if ( address > 0 )
 		{
