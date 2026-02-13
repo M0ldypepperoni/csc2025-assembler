@@ -93,7 +93,7 @@ Memory getValue(Memory operand)
 		address++;
 		return value;
 	}
-}//prototype only ***NEEDS WORK***
+}
 /************  putValue   ****************
 * puts a value into a register
 * 
@@ -149,10 +149,10 @@ int main( )
 	
 	runMachineCode( );
 	printf( "\n\nFinal Memory dump in integers\n" );
-	printMemoryDump( );  //displays memory with final values
+	printMemoryDump( );  //displays memory with final valuesa
 	printf( "\n\nFinal Memory dump in hex\n" );
 	printMemoryDumpHex( );  //displays memory with final values in hex 
-	
+
 	printf( "\n" );   //puts a blank line betwwen the code output and the system output
 	return 0;
 }
@@ -258,15 +258,11 @@ void convertToMachineCode( FILE* fin )
 /********************   runMachineCode   ***********************
 Executes the machine code that is in memory, the virtual machine
 
-<<<<<<< HEAD
- parameters: none
- return value: none
-=======
+
 Runs the code from .asm file that is interpreted by convert to machine
 
 //parameter: none
 //return: none
->>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
@@ -285,19 +281,13 @@ void runMachineCode( )
 		part1 = fullCommand & MASK1;
 		part2 = ( fullCommand & MASK2 ) >> 3;
 		part3 = fullCommand & MASK3;
-<<<<<<< HEAD
 
-		if ( part1 == MOVREG )
-		{
-			value1 = getValue( part3 );
-			putValue( part2, value1 ); 
-		}
 		
-=======
+
 		//1 part commands
 		if (fullCommand == PUT)
 		{
-			printf("\t AX is %d", regis.AX);
+			printf("\t\t\t AX is %d", regis.AX);
 		}
 		//2 part commands
 
@@ -305,9 +295,8 @@ void runMachineCode( )
 		if (part1 == MOVREG)
 		{
 			value1 = getValue(part3);
-			putValue(part2, value1); 
+			putValue( part2, value1 ); 
 		}
->>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
 
 		if ( part1 == ADD )  //add to a register
 		{
