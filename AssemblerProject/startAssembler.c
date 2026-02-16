@@ -263,10 +263,6 @@ Runs the code from .asm file that is interpreted by convert to machine
 
 //parameter: none
 //return: none
-<<<<<<< HEAD
-
-=======
->>>>>>> 9403832b153e96565d13d2dab0dcf6e6fada79b2
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
@@ -284,15 +280,12 @@ void runMachineCode( )
 	{
 		part1 = fullCommand & MASK1;
 		part2 = ( fullCommand & MASK2 ) >> 3;
-<<<<<<< HEAD
 		part3 = fullCommand & MASK3;		
 
-=======
-		part3 = fullCommand & MASK3;
+
 
 		
 
->>>>>>> 9403832b153e96565d13d2dab0dcf6e6fada79b2
 		//1 part commands
 		if (fullCommand == PUT)
 		{
@@ -306,10 +299,6 @@ void runMachineCode( )
 			value1 = getValue(part3);
 			putValue( part2, value1 ); 
 		}
-<<<<<<< HEAD
-
-=======
->>>>>>> 9403832b153e96565d13d2dab0dcf6e6fada79b2
 
 		if ( part1 == ADD )  //add to a register
 		{
