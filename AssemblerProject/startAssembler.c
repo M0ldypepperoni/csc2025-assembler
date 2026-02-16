@@ -1,6 +1,6 @@
 // name:Avery Pitts
-// project title:
-// date:
+// project title: Asssmebler Project SP26
+// date: 2/15/2026
 // i/o files:
 // description:
 
@@ -258,15 +258,12 @@ void convertToMachineCode( FILE* fin )
 /********************   runMachineCode   ***********************
 Executes the machine code that is in memory, the virtual machine
 
-<<<<<<< HEAD
- parameters: none
- return value: none
-=======
+
 Runs the code from .asm file that is interpreted by convert to machine
 
 //parameter: none
 //return: none
->>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
+
 -----------------------------------------------------------*/
 void runMachineCode( )
 {
@@ -284,16 +281,8 @@ void runMachineCode( )
 	{
 		part1 = fullCommand & MASK1;
 		part2 = ( fullCommand & MASK2 ) >> 3;
-		part3 = fullCommand & MASK3;
-<<<<<<< HEAD
+		part3 = fullCommand & MASK3;		
 
-		if ( part1 == MOVREG )
-		{
-			value1 = getValue( part3 );
-			putValue( part2, value1 ); 
-		}
-		
-=======
 		//1 part commands
 		if (fullCommand == PUT)
 		{
@@ -307,7 +296,7 @@ void runMachineCode( )
 			value1 = getValue(part3);
 			putValue(part2, value1); 
 		}
->>>>>>> 143b4e05f6de941d6eccbea7d8e8457f68fcc3af
+
 
 		if ( part1 == ADD )  //add to a register
 		{
