@@ -95,7 +95,7 @@ Memory getValue(Memory operand)
 	}
 }
 /************  putValue   ****************
-* puts a value into a register
+* puts a value into a register by using 
 * 
 * parameters: operand, value
 * return value: none
@@ -188,7 +188,8 @@ void assembler( )
 /********************   convertToMachineCode   ***********************
 * Converts a single line of ASM to machine code
 
-***Needs work***, comment must be corrected
+parameters: a .asm file
+return: none
 ---------------------------------------------------------------------*/
 void convertToMachineCode( FILE* fin )
 {
@@ -294,13 +295,13 @@ void runMachineCode( )
 		//2 part commands
 
 		//3 part commands
-		if (part1 == MOVREG)
+		else if (part1 == MOVREG)
 		{
 			value1 = getValue(part3);
 			putValue( part2, value1 ); 
 		}
 
-		if ( part1 == ADD )  //add to a register
+		else if ( part1 == ADD )  //add to a register
 		{
 			value1 = getValue(part2);
 			value2 = getValue(part3);
@@ -329,9 +330,11 @@ void runMachineCode( )
 /*****************************************************************************/
 
 /********************   splitCommand   ***********************
-splits a line of asm into it's parts
+breaks a given line of asm so it can be converted by machine code
+by filling char part1, part2, part 3 as the line gets seperated
 
-Needs work, comment must be corrected
+parameters: line of asm and 3 empty parts
+return: none
 -----------------------------------------------------------*/
 void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 {
@@ -385,9 +388,8 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 *		5 bx address plus offset -added in part 7
 *		6 address -added in part 5
 *		7 constant 
-*parameters:
-* letter - the first letter of the operand, register, number, [
-*return value - the number of the register
+*parameters: letter - first char of the operand 
+*return: value - the number of the register or constant if it is working 
 --------------------------------------------------------------*/
 int whichOperand( char operand[ LINE_SIZE ] )
 {
@@ -585,7 +587,7 @@ void printMemoryDumpHex( )
 } //end printMemoryDumpHex
 
 
-/*problems:
+/*problems: no problems
 */
 /* ***NEEDS WORK*** 
 *	As you encounter problems "head bangers" list them here with your solution if you 
