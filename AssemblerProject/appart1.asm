@@ -1,7 +1,6 @@
-mov bx 55
-mov ax 234
-mov cx 2
-mov dx cx
-add cx bx
+mov bx 8
+mov ax 19
+add ax bx
+mov [9] ax
 put
 halt

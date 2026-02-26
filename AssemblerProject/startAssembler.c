@@ -24,12 +24,14 @@ char ASM_FILE_NAME[] = "appart1.asm";  //the name of the assembly code file
 #define CXREG 2
 #define DXREG 3
 #define CONSTANT 7
+#define ADDRESS 6
 
 //commands
 #define HALT 5
 #define MOVREG 192
 #define ADD 160
 #define PUT 7
+#define MOVMEM 224
 
 //boolean
 #define TRUE 1
@@ -61,67 +63,6 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] );	
 void convertToMachineCode( FILE *fin );	// Converts a single line of ASM to machine code	***NEEDS WORK***
 void assembler( );			// Converts the entire ASM file and stores it in memory
 void runMachineCode( );	// Executes the machine code
-/************  getValue   ***************
-* gets the value of an operand, 
-	if the operand is a constant it gets the value from memory
-*parameters: operand
-* return value: the value of the coresponding resgistery or constant
-----------------------------------------*/
-
-Memory getValue(Memory operand)
-{
-	int value;
-	if ( operand == AXREG) 
-	{
-		return regis.AX;
-	}
-	if (operand == BXREG) 
-	{
-		return regis.BX;
-	}
-	if (operand == CXREG) 
-	{
-		return regis.CX;
-	}
-	if (operand == DXREG) 
-	{
-		return regis.DX;
-	}
-	else if (operand == CONSTANT)
-	{
-		value = memory[address];
-		address++;
-		return value;
-	}
-}
-/************  putValue   ****************
-* puts a value into a register by using 
-* 
-* parameters: operand, value
-* return value: none
-* 
-----------------------------------------*/
-void putValue(int operand, int value)
-{
-
-	if (operand == AXREG)
-	{
-		regis.AX = value;
-	}
-	else if (operand == BXREG)
-	{
-		regis.BX = value;
-	}
-	else if (operand == CXREG)
-	{
-		regis.CX = value;
-	}
-	else if (operand == DXREG)
-	{
-		regis.DX = value;
-	}
-}
-
 
 //prototype only ***NEEDS WORK***
 
@@ -231,7 +172,18 @@ void convertToMachineCode( FILE* fin )
 	{
 		if ( part1[ 0 ] == 'm' )  //move into a register
 		{
-			machineCode = MOVREG;
+			if (part2[ 0 ] == '[') 
+			{
+				machineCode = MOVMEM;
+				char temp[ LINE_SIZE ]; 
+				strcpy( temp, part2 ); // moves part2 into temp without '['
+				strcpy( part2, part3 );
+				strcpy( part3, temp );
+			}
+			else
+			{
+				machineCode = MOVREG;
+			}
 		}
 		else if (part1[0] == 'a') 
 		{
@@ -300,6 +252,11 @@ void runMachineCode( )
 			value1 = getValue(part3);
 			putValue( part2, value1 ); 
 		}
+		else if (part1 == MOVMEM)
+		{
+			value1 = getValue(part2);
+			putValue(ADDRESS, value1);
+		}
 
 		else if ( part1 == ADD )  //add to a register
 		{
@@ -328,6 +285,80 @@ void runMachineCode( )
 /*****************************************************************************/
 /*********** helper function for converting to machine code ******************/
 /*****************************************************************************/
+
+/************  getValue   ***************
+* gets the value of an operand, 
+	if the operand is a constant it gets the value from memory
+*parameters: operand
+* return value: the value of the coresponding resgistery or constant
+----------------------------------------*/
+
+Memory getValue(Memory operand)
+{
+	int value;
+	if ( operand == AXREG) 
+	{
+		return regis.AX;
+	}
+	if (operand == BXREG) 
+	{
+		return regis.BX;
+	}
+	if (operand == CXREG) 
+	{
+		return regis.CX;
+	}
+	if (operand == DXREG) 
+	{
+		return regis.DX;
+	}
+	if (operand == ADDRESS) 
+	{
+		return memory[value];
+	}
+	else if (operand == CONSTANT)
+	{
+		value = memory[address];
+		address++;
+		return value;
+	}
+}
+/************  putValue   ****************
+* puts a value into a register by using 
+* 
+* parameters: 2 ints - operand for wich registry the value is being put, value goes ito a registry
+* return value: none
+* 
+----------------------------------------*/
+void putValue(int operand, int value)
+{
+
+	if (operand == AXREG)
+	{
+		regis.AX = value;
+	}
+	else if (operand == BXREG)
+	{
+		regis.BX = value;
+	}
+	else if (operand == CXREG)
+	{
+		regis.CX = value;
+	}
+	else if (operand == DXREG)
+	{
+		regis.DX = value;
+	}
+	else if (operand == ADDRESS)
+	{
+		int newAddr;
+		newAddr = memory[ address ];
+		address++;
+		memory[ newAddr ] = value;
+
+	}
+}
+
 
 /********************   splitCommand   ***********************
 breaks a given line of asm so it can be converted by machine code
@@ -388,7 +419,7 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 *		5 bx address plus offset -added in part 7
 *		6 address -added in part 5
 *		7 constant 
-*parameters: letter - first char of the operand 
+*parameters:  char operand - the 
 *return: value - the number of the register or constant if it is working 
 --------------------------------------------------------------*/
 int whichOperand( char operand[ LINE_SIZE ] )
@@ -413,6 +444,10 @@ int whichOperand( char operand[ LINE_SIZE ] )
 	else if ( isDigitOrNeg( letter ) )
 	{
 		return CONSTANT;
+	}
+	else if (letter == '[')
+	{
+		return ADDRESS;
 	}
 	return -1;  //something went wrong if -1 is returned
 }//end whichOperand
