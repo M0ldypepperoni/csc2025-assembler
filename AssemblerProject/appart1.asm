@@ -1,6 +1,14 @@
-mov bx 8
-mov ax 19
-add ax bx
-mov [9] ax
-put
+mov bx 0
+mov bx [15]
 halt
+
+
+
+
+
+
+
+
+
+
+25

@@ -72,12 +72,14 @@ int changeToNumber( char line[ ], int start );	// converts a sub-string to an in
                                                 //so it is the location directly after the number ***NEEDS WORK***
 
 // Helper functions prototypes, these functions should NOT be changed ****NEEDS WORK***
-int whichOperand( char operand[]);			// Returns the number of the registar or other operand
+int whichOperand(char operand[LINE_SIZE]);// ns the number of the registar or other operand
 void changeToLowerCase( char line[ ] );	// Changes each character in the string to lower case
 void printMemoryDump( );	               // Prints memeory with commands represented as integes
 void printMemoryDumpHex( );				   // Prints memory in hexedecimal
 int isDigitOrNeg( char letter );            // is a charater the start of a positive or negative number
 void registerStartValues( );              // gives all registers & flag random values to start
+Memory getValue(Memory operand);
+void putValue(int operand, int value);
 
 
 //***needs work ***
@@ -255,7 +257,7 @@ void runMachineCode( )
 		else if (part1 == MOVMEM)
 		{
 			value1 = getValue(part2);
-			putValue(ADDRESS, value1);
+			putValue(part3, value1);
 		}
 
 		else if ( part1 == ADD )  //add to a register
@@ -314,6 +316,8 @@ Memory getValue(Memory operand)
 	}
 	if (operand == ADDRESS) 
 	{
+		value = memory[address];
+		address++;
 		return memory[value];
 	}
 	else if (operand == CONSTANT)
@@ -351,7 +355,7 @@ void putValue(int operand, int value)
 	}
 	else if (operand == ADDRESS)
 	{
-		int newAddr;
+		int newAddr = 0;
 		newAddr = memory[ address ];
 		address++;
 		memory[ newAddr ] = value;
