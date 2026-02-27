@@ -1,5 +1,6 @@
-mov bx 0
-mov bx [15]
+mov bx 2
+mov ax 12
+mov cx 56
 halt
 
 
