@@ -244,7 +244,7 @@ void runMachineCode( )
 		//1 part commands
 		if (fullCommand == PUT)
 		{
-			printf("\t\t\t AX is %d", regis.AX);
+			printf("\t\t\t\t AX is %d", regis.AX);
 		}
 		//2 part commands
 
@@ -318,7 +318,7 @@ Memory getValue(Memory operand)
 	{
 		value = memory[address];
 		address++;
-		return memory[value];
+		return memory[ value ];
 	}
 	else if (operand == CONSTANT)
 	{
