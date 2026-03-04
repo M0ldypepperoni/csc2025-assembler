@@ -257,7 +257,7 @@ void runMachineCode( )
 		else if (part1 == MOVMEM)
 		{
 			value1 = getValue(part2);
-			putValue(ADDRESS, value1);
+			putValue(part3, value1);
 		}
 
 		else if ( part1 == ADD )  //add to a register
@@ -393,9 +393,14 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 		partIndex = 0;  //resets part index
 		while (line[lineIndex] != ' ' && line[lineIndex] != '\0' && line[lineIndex] != '\n')
 		{
-			part2[partIndex] = line[lineIndex];
-			lineIndex++;
-			partIndex++;
+			if (line[lineIndex] != '[' && line[lineIndex] != ']')
+			{
+				part2[partIndex] = line[lineIndex];
+				partIndex++;
+			}
+				lineIndex++;
+				
+			
 		}
 		part2[lineIndex] = '\0';
 	
