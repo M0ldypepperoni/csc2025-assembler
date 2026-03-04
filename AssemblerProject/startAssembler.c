@@ -398,10 +398,7 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 			partIndex++;
 		}
 		part2[lineIndex] = '\0';
-	}
-
-	if (line[lineIndex] != '\0')
-	{
+	
 		lineIndex++;  //skips the space
 		partIndex = 0;  //resets part index
 		while (line[lineIndex] != ' ' && line[lineIndex] != '\0' && line[lineIndex] != '\n')
