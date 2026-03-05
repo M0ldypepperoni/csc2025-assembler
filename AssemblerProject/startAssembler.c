@@ -257,7 +257,7 @@ void runMachineCode( )
 		else if (part1 == MOVMEM)
 		{
 			value1 = getValue(part2);
-			putValue(ADDRESS, value1);
+			putValue(part3, value1);
 		}
 
 		else if ( part1 == ADD )  //add to a register
