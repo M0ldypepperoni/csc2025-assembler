@@ -181,6 +181,7 @@ void convertToMachineCode( FILE* fin )
 				strcpy( temp, part2 ); // moves part2 into temp without '['
 				strcpy( part2, part3 );
 				strcpy( part3, temp );
+				
 			}
 			else
 			{
@@ -200,6 +201,10 @@ void convertToMachineCode( FILE* fin )
 		{
 			memory[ address ] = changeToNumber( part3, 0 );
 			address++;
+		}
+		else if (operand2 == ADDRESS) 
+		{
+
 		}
 		//put the first operand (register) into the next 2 bits (use bitshift)
 		//put the second operand into the last 3 bits 
@@ -393,14 +398,9 @@ void splitCommand( char line[ ], char part1[ ], char part2[ ], char part3[ ] )
 		partIndex = 0;  //resets part index
 		while (line[lineIndex] != ' ' && line[lineIndex] != '\0' && line[lineIndex] != '\n')
 		{
-			if (line[lineIndex] != '[' && line[lineIndex] != ']')
-			{
 				part2[partIndex] = line[lineIndex];
-				partIndex++;
-			}
 				lineIndex++;
-				
-			
+				partIndex++;
 		}
 		part2[lineIndex] = '\0';
 	
