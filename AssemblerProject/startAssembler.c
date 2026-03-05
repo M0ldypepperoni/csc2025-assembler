@@ -197,15 +197,12 @@ void convertToMachineCode( FILE* fin )
 		machineCode = machineCode + operand1 + operand2;
 		memory[ address ] = machineCode;
 		address++;
-		if(operand2 == CONSTANT) 
+		if(operand2 == CONSTANT || operand2 == ADDRESS)
 		{
 			memory[ address ] = changeToNumber( part3, 0 );
 			address++;
 		}
-		else if (operand2 == ADDRESS) 
-		{
-
-		}
+	
 		//put the first operand (register) into the next 2 bits (use bitshift)
 		//put the second operand into the last 3 bits 
 		//assign the machine code to the memory
