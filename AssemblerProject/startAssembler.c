@@ -1,8 +1,8 @@
 // name:Avery Pitts
 // project title: Asssmebler Project SP26
-// date: 2/15/2026
-// i/o files:
-// description:
+// date: 3/6/2026
+// i/o files: none
+// description: Reads assembly code from a file, converts it to machine code, and then runs the machine code in a virtual machine.	
 
 #define _CRT_SECURE_NO_WARNINGS  // lets us use deprecated code
 
@@ -12,7 +12,7 @@
 #include <ctype.h>
 #include <time.h>
 
-char ASM_FILE_NAME[] = "appart1.asm";  //the name of the assembly code file
+char ASM_FILE_NAME[] = "appart4.asm";  //the name of the assembly code file
 
 #define MAX 150			// strlen of simulators memory can be changed
 #define COL 9			// number of columns for output
@@ -28,10 +28,19 @@ char ASM_FILE_NAME[] = "appart1.asm";  //the name of the assembly code file
 
 //commands
 #define HALT 5
-#define MOVREG 192
-#define ADD 160
+#define GET 6
 #define PUT 7
+#define JE 8
+#define JNE 9
+#define JA 10
+#define JAE 11
+#define JB 12
+#define JBE 13
+#define JMP 14
+#define ADD 160
+#define MOVREG 192
 #define MOVMEM 224
+
 
 //boolean
 #define TRUE 1
@@ -78,12 +87,11 @@ void printMemoryDump( );	               // Prints memeory with commands represen
 void printMemoryDumpHex( );				   // Prints memory in hexedecimal
 int isDigitOrNeg( char letter );            // is a charater the start of a positive or negative number
 void registerStartValues( );              // gives all registers & flag random values to start
-Memory getValue(Memory operand);
-void putValue(int operand, int value);
+Memory getValue(Memory operand);          // returns the value of a register, memory address, or constant from the operand
+void putValue(int operand, int value);    // puts a value into a register or memory add  ress based on the operand
 
 
-//***needs work ***
-//no comment needed for function main, its comment is the header for the project
+
 int main( )
 {
 	assembler( );
@@ -129,7 +137,7 @@ void assembler( )
 }
 
 /********************   convertToMachineCode   ***********************
-* Converts a single line of ASM to machine code
+* Converts a single line of assembly to machine code
 
 parameters: a .asm file
 return: none
@@ -144,7 +152,7 @@ void convertToMachineCode( FILE* fin )
 
 	fgets( line, LINE_SIZE, fin );		// Takes one line from the asm file
 	changeToLowerCase( line );
-	if (line[0] == '\n' || line[0] == '\0') //handles blank lines
+	if (line[0] == '\n' || line[0] == '\0' || line[0] == ';') //handles blank lines and coomments,
 	{
 		address++;
 		return;
@@ -155,10 +163,22 @@ void convertToMachineCode( FILE* fin )
 	printf( "\nCommand = P1=%s P2=%s P3=%s", part1, part2, part3 );
 
 	      //start of one part commands
+	
 	if ( part1[ 0 ] == 'h' )  //halt
 	{
 		memory[ address ] = HALT;
 		address++;
+		return;
+	}
+	else if (part1[0] == 'g')  //get
+	{
+		machineCode = GET;
+		memory[address] = machineCode;
+		address++;
+		return;
+	}
+	else if (part1[0] == ';')
+	{
 		return;
 	}
 	else if (part1[0] == 'p')
@@ -214,9 +234,7 @@ void convertToMachineCode( FILE* fin )
 
 /********************   runMachineCode   ***********************
 Executes the machine code that is in memory, the virtual machine
-
-
-Runs the code from .asm file that is interpreted by convert to machine
+runs the code from .asm file that is interpreted by convert to machine
 
 //parameter: none
 //return: none
@@ -244,7 +262,13 @@ void runMachineCode( )
 		
 
 		//1 part commands
-		if (fullCommand == PUT)
+		if (fullCommand == GET)
+		{
+			printf("\t\t\t\t Enter a value: ");
+			scanf_s("%d", &value1);
+			putValue(regis.AX, value1);
+		}
+		else if (fullCommand == PUT)
 		{
 			printf("\t\t\t\t AX is %d", regis.AX);
 		}
@@ -261,14 +285,14 @@ void runMachineCode( )
 			value1 = getValue(part2);
 			putValue(part3, value1);
 		}
-
 		else if ( part1 == ADD )  //add to a register
 		{
 			value1 = getValue(part2);
 			value2 = getValue(part3);
 			value1 += value2;
 			putValue(part2, value1);
-		}
+		} 
+		else if (part1)
 		
 		//debugging tool change address to show what you are unsure about
 		fullCommand = memory[ address ];  //not yet broken into the three parts
@@ -294,7 +318,7 @@ void runMachineCode( )
 * gets the value of an operand, 
 	if the operand is a constant it gets the value from memory
 *parameters: operand
-* return value: the value of the coresponding resgistery or constant
+* return value: the value of the coresponding resgistery, constant, or memory address
 ----------------------------------------*/
 
 Memory getValue(Memory operand)
@@ -332,7 +356,7 @@ Memory getValue(Memory operand)
 /************  putValue   ****************
 * puts a value into a register by using 
 * 
-* parameters: 2 ints - operand for wich registry the value is being put, value goes ito a registry
+* parameters: 2 ints - operand for wich registry the value is being put, value goes ito a registry or memory address
 * return value: none
 * 
 ----------------------------------------*/
@@ -625,13 +649,11 @@ void printMemoryDumpHex( )
 } //end printMemoryDumpHex
 
 
-/*problems: no problems
+
+
+/*problems: 
+get value not working and causing a loop
 */
-/* ***NEEDS WORK*** 
-*	As you encounter problems "head bangers" list them here with your solution if you 
-*	found one.  Remove this with your final solution at the end of the semester. If you
-*	didn't have major issues write "no problems."  If the code doesn't work and you have
-*  "no Problems" you will lose points.
-*/
+
 
 
