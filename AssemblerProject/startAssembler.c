@@ -37,6 +37,7 @@ char ASM_FILE_NAME[] = "appart4.asm";  //the name of the assembly code file
 #define JB 12
 #define JBE 13
 #define JMP 14
+#define CMP 96
 #define ADD 160
 #define MOVREG 192
 #define MOVMEM 224
@@ -89,7 +90,7 @@ int isDigitOrNeg( char letter );            // is a charater the start of a posi
 void registerStartValues( );              // gives all registers & flag random values to start
 Memory getValue(Memory operand);          // returns the value of a register, memory address, or constant from the operand
 void putValue(int operand, int value);    // puts a value into a register or memory add  ress based on the operand
-
+void checkSemiColon(char line[]);
 
 
 int main( )
@@ -152,12 +153,12 @@ void convertToMachineCode( FILE* fin )
 
 	fgets( line, LINE_SIZE, fin );		// Takes one line from the asm file
 	changeToLowerCase( line );
-	if (line[0] == '\n' || line[0] == '\0' || line[0] == ';') //handles blank lines and coomments,
+	if (line[0] == '\n' || line[0] == '\0') //handles blank lines
 	{
 		address++;
 		return;
 	}
-
+	checkSemiColon(line); //removes comments from the line, if there are any
 	splitCommand( line, part1, part2, part3 );
 	            //for debugging, comment out when you have most commands converted.
 	printf( "\nCommand = P1=%s P2=%s P3=%s", part1, part2, part3 );
@@ -177,10 +178,6 @@ void convertToMachineCode( FILE* fin )
 		address++;
 		return;
 	}
-	else if (part1[0] == ';')
-	{
-		return;
-	}
 	else if (part1[0] == 'p')
 	{
 		machineCode = PUT;
@@ -189,7 +186,50 @@ void convertToMachineCode( FILE* fin )
 		return;
 	}
 	      //start of two part commands
+	else if (part1[0] == 'j')  //jump commands
+	{
+		if (part1[1] == 'e')
+		{
+			machineCode = JE;
+		}
+		else if (part1[1] == 'n')
+		{
+			machineCode = JNE;
+		}
+		else if (part1[1] == 'a')
+		{
+			if (part1[2] == 'e')
+			{
+				machineCode = JAE;
+			}
+			else
+			{
+				machineCode = JA;
+			}
+		}
 
+		else if (part1[1] == 'b')
+		{
+			if (part1[2] == 'e')
+			{
+				machineCode = JBE;
+			}
+			else
+			{
+				machineCode = JB;
+			}
+		}
+
+		else if (part1[1] == 'm')
+		{
+			machineCode = JMP;
+		}
+		memory[address] = machineCode;
+		address++;
+		memory[address] = changeToNumber(part2, 0);
+		address++;
+		return;
+	}
 	else //start of three part commands
 	{
 		if ( part1[ 0 ] == 'm' )  //move into a register
@@ -211,6 +251,10 @@ void convertToMachineCode( FILE* fin )
 		else if (part1[0] == 'a') 
 		{
 			machineCode = ADD;
+		}
+		else if (part1[0] == 'c')
+		{
+			machineCode = CMP;
 		}
 		int operand1 = whichOperand( part2 ) << 3;
 		int operand2 = whichOperand(part3);
@@ -265,14 +309,48 @@ void runMachineCode( )
 		if (fullCommand == GET)
 		{
 			printf("\t\t\t\t Enter a value: ");
-			scanf_s("%d", &value1);
-			putValue(regis.AX, value1);
+			scanf("%d", &value1); 
+			putValue(AXREG, value1);
 		}
 		else if (fullCommand == PUT)
 		{
 			printf("\t\t\t\t AX is %d", regis.AX);
 		}
 		//2 part commands
+		else if (fullCommand >= JE && fullCommand <= JMP)
+		{
+			Memory newAddr = memory[address];
+			address++;
+
+			if (fullCommand == JE && regis.flag == 0)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JNE && regis.flag != 0)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JB && regis.flag == -1)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JBE && regis.flag < 1)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JA && regis.flag == 1)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JAE && regis.flag > -1)
+			{
+				address = newAddr;
+			}
+			else if (fullCommand == JMP)
+			{
+				address = newAddr;
+			}
+		}
 
 		//3 part commands
 		else if (part1 == MOVREG)
@@ -292,7 +370,24 @@ void runMachineCode( )
 			value1 += value2;
 			putValue(part2, value1);
 		} 
-		else if (part1)
+		else if( part1 == CMP)
+		{
+			value1 = getValue(part2);
+			value2 = getValue(part3);
+			if (value1 < value2)
+			{
+				regis.flag = -1;
+			}
+			else if (value1 == value2)
+			{
+				regis.flag = 0;
+			}
+			else
+			{
+				regis.flag = 1;
+			}
+		}
+		
 		
 		//debugging tool change address to show what you are unsure about
 		fullCommand = memory[ address ];  //not yet broken into the three parts
@@ -352,6 +447,7 @@ Memory getValue(Memory operand)
 		address++;
 		return value;
 	}
+	return -1;
 }
 /************  putValue   ****************
 * puts a value into a register by using 
@@ -478,6 +574,17 @@ int whichOperand( char operand[ LINE_SIZE ] )
 	}
 	return -1;  //something went wrong if -1 is returned
 }//end whichOperand
+
+void checkSemiColon( char line[ ])
+{
+	char inSemiColon = strchr(line,';');
+
+	if (inSemiColon != NULL)
+	{
+		strcpy(line, "\0");
+	
+	}
+} //end checkSemiColon
 
 /*********************ChangeToNumber ********************
 * takes in a line and converts digits to a integer          
